@@ -1,0 +1,64 @@
+@startuml
+actor User #red
+participant Nginx
+participant Kiera
+participant DB
+
+'API Spec'
+User->Nginx: POST InitTraining
+activate Nginx
+Nginx->Kiera: POST InitTraining
+activate Kiera
+Kiera->Nginx: 200 OK
+Nginx->User: 200 OK
+deactivate Nginx
+Kiera->DB: Retrieve DataSet Location
+Kiera->Kiera: Load Data Set and Initiate Deep Learning
+User->Nginx: GET Status
+activate Nginx
+
+Nginx->Kiera: GET Training Status
+alt Deep Learning Complete
+  Kiera->Nginx: 200 OK
+  Nginx->User: 200 OK
+else Deep Learning in Progress
+  Kiera->Nginx: 202 Accepted
+  Nginx->User: 202 Accepted
+end
+deactivate Nginx
+
+User->Nginx: GET Accuracy
+activate Nginx
+Nginx->Kiera: GET Accuracy
+alt Deep Learning Complete
+  Kiera->Nginx: 200 OK {Accuracy}
+  Nginx->User: 200 OK {Accuracy}
+else Deep Learning in Progress
+  Kiera->Nginx: 202 Accepted
+  Nginx->User: 202 Accepted
+end
+deactivate Nginx
+
+User->Nginx: GET Prediction\nIndex
+activate Nginx
+Nginx->Kiera: GET Prediction\nIndex
+alt Deep Learning Complete
+  Kiera->DB: Check if Prediction exists for requested index
+  alt Prediction Exists
+    DB->Kiera: {Predicted Label, Actual Label}
+  else
+    Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through NN Model
+  end
+  Kiera->Nginx: 200 OK {Predicted Label, Actual Label}
+  Nginx->User: 200 OK {Predicted Label, Actual Label}
+else Deep Learning in Progress
+  Kiera->Nginx: 202 Accepted
+  Nginx->User: 202 Accepted
+else Index Out of Range
+  Kiera->Nginx: 400 Bad Request
+  Nginx->User: 400 Bad Request
+end
+deactivate Nginx
+destroy Nginx
+destroy Kiera
+@enduml
