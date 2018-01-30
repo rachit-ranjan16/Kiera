@@ -9,4 +9,4 @@ TODO Add Deep Neural Net Design on finalizing
 
 ## Design Documentation
 ![Could not display. Check design/ComponentDiag.png](/design/ComponentDiag.png?raw=true "Component Diagram")
-![Could not display. Check design/SequenceDiag.png](/img/ComponentDiag.png?raw=true "Sequence Diagram")
+![Could not display. Check design/SequenceDiag.png](/design/SequenceDiag.png?raw=true "Sequence Diagram")
