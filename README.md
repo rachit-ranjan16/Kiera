@@ -8,7 +8,7 @@ A Deep Learning Application for Traffic Sign Recognition
 ### Deep Neural Network
 TODO Add Deep Neural Net Design
 ### Microservice Architecture 
-### Component Diagram
+#### Component Diagram
 ![Could not display. Check design/ComponentDiag.png](/design/ComponentDiag.png?raw=true "Component Diagram")
-### Sequence Diagram
+#### Sequence Diagram
 ![Could not display. Check design/SequenceDiag.png](/design/SequenceDiag.png?raw=true "Sequence Diagram")
