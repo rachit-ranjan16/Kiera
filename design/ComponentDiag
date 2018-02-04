@@ -1,0 +1,17 @@
+@startuml
+
+[<<Web Server>>\nNginx Front End] as Nginx
+[<<Deep Learning Application>>\nDjango] as Django
+database "SQLite" {
+ [<<Database>>] as DB
+}
+interface "HTTP 8080" as HTTP
+interface "WGSI 8086" as DjServer
+interface "3306" as DBPort
+Nginx -left-> HTTP
+Nginx -right-> DjServer
+DjServer -down-> Django
+Django -down-> DBPort
+DBPort -right-> DB
+
+@enduml
