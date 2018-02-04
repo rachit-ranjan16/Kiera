@@ -2,12 +2,12 @@
 Deep Learning Traffic Sign Recognition System
 
 ## Description
-TODO Add brief Description
-
-## Deep Network Design
-TODO Add Deep Neural Net Design on finalizing
+A Deep Learning Application for Traffic Sign Recognition
 
 ## Design Documentation
+### Deep Neural Network
+TODO Add Deep Neural Net Design
+### Microservice Architecture 
 ### Component Diagram
 ![Could not display. Check design/ComponentDiag.png](/design/ComponentDiag.png?raw=true "Component Diagram")
 ### Sequence Diagram
