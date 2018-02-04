@@ -47,7 +47,7 @@ alt Deep Learning Complete
   alt Prediction Exists
     DB->Kiera: {Predicted Label, Actual Label}
   else
-    Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through NN Model
+    Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through trained NN Model
   end
   Kiera->Nginx: 200 OK {Predicted Label, Actual Label}
   Nginx->User: 200 OK {Predicted Label, Actual Label}

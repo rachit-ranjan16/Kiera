@@ -2,7 +2,7 @@
 
 [<<Web Server>>\nNginx Front End] as Nginx
 [<<Deep Learning Application>>\nDjango] as Django
-database "MySql" {
+database "SQLite" {
  [<<Database>>] as DB
 }
 interface "HTTP 8080" as HTTP
