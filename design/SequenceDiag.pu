@@ -3,7 +3,7 @@ actor User #red
 participant Nginx
 participant Kiera
 participant DB
-
+scale 1920*1080
 'API Spec'
 User->Nginx: POST InitTraining
 activate Nginx
