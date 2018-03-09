@@ -18,6 +18,5 @@ from django.urls import path, include
 from rec import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('rec/status', views.status, name='status'),
 ]
