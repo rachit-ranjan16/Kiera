@@ -5,4 +5,4 @@ from django.db import models
 
 class Cache(models.Model):
     image_id = models.IntegerField()
-    prediction = models.CharField(max_length=5)
+    prediction = models.CharField(max_length=100)

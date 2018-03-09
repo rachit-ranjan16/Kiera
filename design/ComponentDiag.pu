@@ -1,7 +1,13 @@
 @startuml
 
 [<<Web Server>>\nNginx Front End] as Nginx
-[<<Deep Learning Application>>\nDjango] as Django
+
+package "Deep Learning Application" {
+    [<<Application Server>>\nDjango] as Django
+    database "Redis" {
+        [<<Message Broker>>] as MB
+    }
+}
 database "SQLite" {
  [<<Database>>] as DB
 }
@@ -12,6 +18,7 @@ Nginx -left-> HTTP
 Nginx -right-> DjServer
 DjServer -down-> Django
 Django -down-> DBPort
+Django -right- MB
 DBPort -right-> DB
 
 @enduml
