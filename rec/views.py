@@ -16,8 +16,8 @@ class State(Enum):
 
 state_dict = {
     State.READY: 'READY',
-    State.IN_PROGRESS: 'Training in Progress',
-    State.COMPLETED: 'Training Completed'
+    State.IN_PROGRESS: 'IN_PROGRESS',
+    State.COMPLETED: 'COMPLETED'
 }
 
 state = State.READY
