@@ -57,11 +57,13 @@ activate Nginx
 Nginx->Kiera: GET Prediction\nIndex
 alt Deep Learning Complete
   Kiera->Cache: Check if Prediction exists for requested index
+  activate Cache
   alt Prediction Exists
     Cache->Kiera: {Predicted Label, Actual Label}
   else
     Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through trained NN Model
   end
+  deactivate Cache
   Kiera->Nginx: 200 OK {Predicted Label, Actual Label}
   Nginx->User: 200 OK {Predicted Label, Actual Label}
 else Deep Learning in Progress
