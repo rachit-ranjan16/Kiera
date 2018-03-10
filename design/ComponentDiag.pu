@@ -5,18 +5,15 @@
 package "Deep Learning Application" {
     [<<Application Server>>\nDjango] as Django
     [<<Message Broker>>\n RabbitMQ] as MB
+    database "<<SQLite>>\nCache" as DB
 }
-database "SQLite" {
- [<<Database>>] as DB
-}
+
 interface "HTTP 8080" as HTTP
 interface "WGSI 8086" as DjServer
-interface "3306" as DBPort
 Nginx -left-> HTTP
 Nginx -right-> DjServer
 DjServer -down-> Django
-Django -down-> DBPort
 Django -right- MB
-DBPort -right-> DB
+Django -down- DB
 
 @enduml

@@ -2,40 +2,53 @@
 actor User #red
 participant Nginx
 participant Kiera
-participant DB
+participant Cache
 scale 1920*1080
 'API Spec'
-User->Nginx: POST InitTraining
-activate Nginx
-Nginx->Kiera: POST InitTraining
-activate Kiera
-Kiera->Nginx: 200 OK
-Nginx->User: 200 OK
-deactivate Nginx
-Kiera->DB: Retrieve DataSet Location
-Kiera->Kiera: Load Data Set and Initiate Deep Learning
-User->Nginx: GET Status
-activate Nginx
 
-Nginx->Kiera: GET Training Status
+User->Nginx: GET /rec/status (Training Status)
+activate Nginx
+Nginx->Kiera: GET /rec/status (Training Status)
+activate Kiera
+Kiera->Nginx: 200 OK\n{'status': 'READY'}
+deactivate Kiera
+Nginx->User: 200 OK\n{'status': 'READY'}
+deactivate Nginx
+
+User->Nginx: POST /rec/train (Init Training)
+activate Nginx
+Nginx->Kiera: POST /rec/train (Init Training)
+activate Kiera
+Kiera->Nginx: 202 Accepted
+Nginx->User: 202 Accepted
+deactivate Nginx
+Kiera->Kiera: <<Async>>\nLoad Data Set
+Kiera->Kiera: <<Async>>\nPreprocess Data\nCreate Model\nInitiate Deep Learning
+
+User->Nginx: GET /rec/status (Training Status)
+activate Nginx
+Nginx->Kiera: GET /rec/status (Training Status)
 alt Deep Learning Complete
-  Kiera->Nginx: 200 OK
-  Nginx->User: 200 OK
+  Kiera->Nginx: 200 OK\n{'state': 'COMPLETED'}
+  Nginx->User: 200 OK\n{'state': 'COMPLETED'}
 else Deep Learning in Progress
-  Kiera->Nginx: 202 Accepted
-  Nginx->User: 202 Accepted
+  Kiera->Nginx: 202 Accepted\n{'state': 'IN_PROGRESS'}
+  Nginx->User: 202 Accepted\n{'state': 'IN_PROGRESS'}
 end
 deactivate Nginx
 
-User->Nginx: GET Accuracy
+User->Nginx: GET /rec/accuracy (Testing Accuracy)
 activate Nginx
-Nginx->Kiera: GET Accuracy
+Nginx->Kiera: /rec/accuracy (Testing Accuracy)
 alt Deep Learning Complete
-  Kiera->Nginx: 200 OK {Accuracy}
-  Nginx->User: 200 OK {Accuracy}
+  Kiera->Nginx: 200 OK\n{accuracy: ''}
+  Nginx->User: 200 OK\n{accuracy: ''}
 else Deep Learning in Progress
   Kiera->Nginx: 202 Accepted
   Nginx->User: 202 Accepted
+else Deep Learning not Initiated
+  Kiera->Nginx: 412 Precondition Failed
+  Nginx->User: 412 Precondition Failed
 end
 deactivate Nginx
 
@@ -43,9 +56,9 @@ User->Nginx: GET Prediction\nIndex
 activate Nginx
 Nginx->Kiera: GET Prediction\nIndex
 alt Deep Learning Complete
-  Kiera->DB: Check if Prediction exists for requested index
+  Kiera->Cache: Check if Prediction exists for requested index
   alt Prediction Exists
-    DB->Kiera: {Predicted Label, Actual Label}
+    Cache->Kiera: {Predicted Label, Actual Label}
   else
     Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through trained NN Model
   end
