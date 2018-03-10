@@ -6,6 +6,7 @@ from keras.optimizers import RMSprop
 import numpy as np
 from configparser import ConfigParser
 import os
+from celery import shared_task
 
 LEARNING_RATE = 'learning_rate'
 BATCH_SIZE = 'batch_size'
@@ -24,6 +25,13 @@ class DeepLearn:
             os.sep +
             'appConfig.ini')
         self.score = 0
+
+    # Asynchronous Driver Method
+    @shared_task
+    def init_deep_learning(self):
+        self.process_data()
+        self.create_model()
+        self.train_model()
 
     def process_data(self):
         # TODO Call code for processing data

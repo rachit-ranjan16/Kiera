@@ -4,9 +4,7 @@
 
 package "Deep Learning Application" {
     [<<Application Server>>\nDjango] as Django
-    database "Redis" {
-        [<<Message Broker>>] as MB
-    }
+    [<<Message Broker>>\n RabbitMQ] as MB
 }
 database "SQLite" {
  [<<Database>>] as DB

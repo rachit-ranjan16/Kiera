@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from django.views import View
 from django.http import HttpResponse
 from enum import Enum
+import json
+from .learn import DeepLearn
 # Create your views here.
 
 
@@ -20,27 +23,25 @@ state_dict = {
 state = State.READY
 
 
-def init(request):
-    # TODO Add implementation for Async POST Call
-    pass
+class TSRView(View):
 
+    def __init__(self):
+        self.state = State.READY
+        self.dL = DeepLearn()
 
-def status(request):
-    if request.method == 'GET':
-        response = HttpResponse(state_dict[state], content_type="text/plain")
+    def get(self, request):
+        # TODO Add implementation for returning accuracy of the trained Deep Learning Model
+        tokens = request.path.split('/')
+        if len(tokens) > 3:
+            return HttpResponse(state=404)
+        response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
         response.status_code = 200
         return response
-    else:
-        return HttpResponse(status=405)
 
+    def post(self, request):
+        # TODO Add implementation for Async POST Call to initiate training
+        # TODO Add implementation for returning prediction of a given image after running it through the trained model
 
-def accuracy(request):
-    # TODO Add implementation for returning accuracy of the trained Deep Learning Model
-    # TODO Finalize url pattern
-    pass
-
-
-def prediction(request):
-    # TODO Add implementation for returning prediction of a given image after running it through the trained model
-    # TODO Finalize url pattern
-    pass
+        # dL.init_deep_learning.delay()
+        #     state = State.IN_PROGRESS
+        pass

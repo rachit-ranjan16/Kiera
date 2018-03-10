@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rec import views
+from rec.views import TSRView
 
 urlpatterns = [
-    path('rec/status', views.status, name='status'),
+    path('rec/status', TSRView.as_view(), name='status'),
+    # TODO Add UrlConfs for POST Init Training POST Predict GET Accuracy and so on
 ]
