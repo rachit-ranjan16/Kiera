@@ -7,6 +7,13 @@ import numpy as np
 from configparser import ConfigParser
 import os
 from celery import shared_task
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+
+from utils.sampler import Sampler
+
 
 LEARNING_RATE = 'learning_rate'
 BATCH_SIZE = 'batch_size'
@@ -38,6 +45,10 @@ class DeepLearn:
             os.sep +
             'appConfig.ini')
         self.score = 0
+        self.model = None
+        self.data = None
+        self.labels = None
+        self.sampler = Sampler()
 
     # Asynchronous Driver Method
     @shared_task
@@ -47,12 +58,39 @@ class DeepLearn:
         self.train_model()
 
     def process_data(self):
-        # TODO Call code for processing data
-        pass
+        self.data, self.labels = self.sampler.process_images()
 
     def create_model(self):
-        # TODO Create Model with configurable parameters
-        pass
+        # Layer 1: Conv
+        self.model = Sequential()
+        self.model.add(Conv2D(32, (5, 5), strides=(1, 1), padding='same',
+                           input_shape=self.data.shape[1:]))
+        self.model.add(Activation('relu'))
+        # Layer 2: Conv
+        self.model.add(Conv2D(32, (5, 5), strides=(1, 1)))
+        self.model.add(Activation('relu'))
+        # Layer 3: MaxPool
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(0.25))
+        # Layer 4: Conv
+        self.model.add(Conv2D(32, (5, 5), strides=(1, 1)))
+        self.model.add(Activation('relu'))
+        # Layer 5: Conv
+        self.model.add(Conv2D(32, (5, 5), strides=(1, 1)))
+        self.model.add(Activation('relu'))
+        # Layer 6: MaxPool
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Dropout(0.25))
+        # Layer 7: Flatten
+        self.model.add(Flatten())
+        # Layer 8: Dense
+        self.model.add(Dense(512))
+        self.model.add(Activation('relu'))
+        self.model.add(Dropout(0.5))
+        # Layer 9: Dense Final Classification
+        self.model.add(Dense(num_classes))
+        self.model.add(Activation('softmax'))
+        self.model.summary()
 
     def train_model(self):
         # TODO Add Implementation for training
