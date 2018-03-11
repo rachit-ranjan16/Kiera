@@ -11,7 +11,20 @@ from celery import shared_task
 LEARNING_RATE = 'learning_rate'
 BATCH_SIZE = 'batch_size'
 EPOCHS = 'epochs'
-
+label_dict = {1: 'speed_limit',
+              2: 'goods_vehicles',
+              3: 'no_overtaking',
+              4: 'no_stopping',
+              5: 'no_parking',
+              6: 'stop',
+              7: 'bicycle',
+              8: 'hump',
+              9: 'no_left',
+              10: 'no_right',
+              11: 'priority_to',
+              12: 'no_entry',
+              13: 'yield',
+              14: 'parking'}
 
 # TODO Add Logging
 
