@@ -14,6 +14,8 @@ from keras.layers import Conv2D, MaxPooling2D
 
 from utils.sampler import Sampler
 
+S = 'DeepLearning'
+LOCATION = 'data_set_location'
 
 LEARNING_RATE = 'learning_rate'
 BATCH_SIZE = 'batch_size'
@@ -58,7 +60,8 @@ class DeepLearn:
         self.train_model()
 
     def process_data(self):
-        self.data, self.labels = self.sampler.process_images()
+        location=self.config.get(S, LOCATION)
+        self.data, self.labels = self.sampler.process_images(location)
 
     def create_model(self):
         # Layer 1: Conv
