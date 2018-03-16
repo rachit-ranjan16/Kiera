@@ -2,7 +2,7 @@
 actor User #red
 participant Nginx
 participant Kiera
-participant Cache
+participant ImageHostingService
 scale 1920*1080
 'API Spec'
 
@@ -52,24 +52,25 @@ else Deep Learning not Initiated
 end
 deactivate Nginx
 
-User->Nginx: GET Prediction\nIndex
+User->Nginx: POST Prediction\nIndex {image-url}
 activate Nginx
-Nginx->Kiera: GET Prediction\nIndex
+Nginx->Kiera: POST Prediction\nIndex {image-url}
 alt Deep Learning Complete
-  Kiera->Cache: Check if Prediction exists for requested index
-  activate Cache
-  alt Prediction Exists
-    Cache->Kiera: {Predicted Label, Actual Label}
-  else
-    Kiera->Kiera: Use Input Index as Test Data\nRun Test Data through trained NN Model
-  end
-  deactivate Cache
-  Kiera->Nginx: 200 OK {Predicted Label, Actual Label}
-  Nginx->User: 200 OK {Predicted Label, Actual Label}
+  Kiera->ImageHostingService: GET image-url
+  activate ImageHostingService
+  alt Invalid image url
+    ImageHostingService->Kiera: 404 Not Found
+    Kiera->Nginx: 404 Invalid Image Url
+    Nginx->User: 404 Invalid Image Url
+  else Valid image url
+    ImageHostingService->Kiera: 200 OK {image}
+    Kiera->Kiera: Generate Prediction using
+    Kiera->Nginx: 200 OK {Predicted Label, Actual Label}
+    Nginx->User: 200 OK {Predicted Label, Actual Label}
 else Deep Learning in Progress
   Kiera->Nginx: 202 Accepted
   Nginx->User: 202 Accepted
-else Index Out of Range
+else Missing/Invalid Image-url
   Kiera->Nginx: 400 Bad Request
   Nginx->User: 400 Bad Request
 end

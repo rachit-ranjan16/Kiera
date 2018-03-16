@@ -1,11 +1,10 @@
 @startuml
 
 [<<Web Server>>\nNginx Front End] as Nginx
-
+[<<External>> Image Hosting] as IH
 package "Deep Learning Application" {
     [<<Application Server>>\nDjango] as Django
     [<<Message Broker>>\n RabbitMQ] as MB
-    database "<<SQLite>>\nCache" as DB
 }
 
 interface "HTTP 8080" as HTTP
@@ -14,6 +13,6 @@ Nginx -left-> HTTP
 Nginx -right-> DjServer
 DjServer -down-> Django
 Django -right- MB
-Django -down- DB
+Django -down- IH
 
 @enduml
