@@ -23,7 +23,7 @@ class Sampler:
         self.input_data = None
         self.out_labels = None
 
-    def process_images(self, location):
+    def read_and_process_images(self, location):
         output_labels = []
         input_data = []
         for filename in glob.glob(location):
