@@ -47,14 +47,14 @@ class DeepLearn:
     # Asynchronous Driver Method
     @shared_task
     def init_deep_learning(self):
-        # TODO Remove test code
-        print("Going to sleep for 10s")
-        time.sleep(10)
-        print("Woke up from Sleep")
-        #TODO Uncomment these
-        # self.process_data()
-        # self.create_model()
-        # self.train_model()
+        # # TODO Remove test code
+        # print("Going to sleep for 10s")
+        # time.sleep(10)
+        # print("Woke up from Sleep")
+        # #TODO Uncomment these
+        self.process_data()
+        self.create_model()
+        self.train_model()
 
     def process_data(self):
         location = self.config['img']['train_data_set_location']
@@ -92,7 +92,7 @@ class DeepLearn:
         # Layer 9: Dense Final Classification
         self.model.add(Dense(len(label_dict.keys())))
         self.model.add(Activation('softmax'))
-        self.model.summary()
+        print(self.model.summary())
 
     def train_model(self):
         """Trains Model """
@@ -104,10 +104,10 @@ class DeepLearn:
                            metrics=['accuracy'])
         # Split data and labels into training, validation and test sets
         x_train, x_test, y_train, y_test = train_test_split(self.data, self.labels,
-                                                            test_size=float(config['hyperparameters']['split']),
+                                                            test_size=float(self.config['hyperparameters']['split']),
                                                             random_state=42)
         x_train, x_val, y_train, y_val = train_test_split(x_train, y_train,
-                                                          test_size=float(config['hyperparameters']['split']),
+                                                          test_size=float(self.config['hyperparameters']['split']),
                                                           random_state=42)
         # One Hot Encoding for Output Labels
         y_train = to_categorical(y_train, len(label_dict.keys()))
@@ -153,6 +153,10 @@ class DeepLearn:
 
 
 if __name__ == '__main__':
+    print("inside main")
     dL = DeepLearn()
+    print("after Deeplearn")
     dL.process_data()
+    print("after process data")
     dL.train_model()
+    print("after train model")
