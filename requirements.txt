@@ -8,4 +8,3 @@ tensorflow
 keras
 pandas
 celery
-uwsgi
