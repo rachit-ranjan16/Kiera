@@ -1,0 +1,11 @@
+matplotlib
+scipy
+scikit-learn
+scikit-image
+requests
+django
+tensorflow
+keras
+pandas
+celery
+uwsgi

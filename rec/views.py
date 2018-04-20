@@ -3,7 +3,9 @@ from django.views import View
 from django.http import HttpResponse
 from enum import Enum
 import json
+import requests
 from .learn import DeepLearn
+from .tasks import init_learning
 # Create your views here.
 
 
@@ -34,14 +36,29 @@ class TSRView(View):
         tokens = request.path.split('/')
         if len(tokens) > 3:
             return HttpResponse(state=404)
-        response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
+        if tokens[2] == 'state':
+            response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
+        elif tokens[2] == 'accuracy':
+            response = HttpResponse(json.dumps({'accuracy': self.dL.get_accuracy()}), content_type="application/json")
         response.status_code = 200
         return response
 
     def post(self, request):
-        # TODO Add implementation for Async POST Call to initiate training
-        # TODO Add implementation for returning prediction of a given image after running it through the trained model
+        tokens = request.path.split('/')
+        if len(tokens) > 3:
+            return HttpResponse(state=400)
+        if tokens[2] == 'train':
+            # POST /rec/train Initiate Training if State is READY or COMPLETED
+            if self.state in (State.READY, State.COMPLETED):
+                # Initiate Training
+                init_learning(self.dL)
+                return HttpResponse(state=201)
+            elif self.state == State.IN_PROGRESS:
+                return HttpResponse(state=202)
+        elif tokens[2] == 'predict':
+            try:
+                r = requests.get(json.load(request.body)['image-url'])
 
-        # dL.init_deep_learning.delay()
-        #     state = State.IN_PROGRESS
-        pass
+            except Exception:
+                return HttpResponse(status=400)
+
