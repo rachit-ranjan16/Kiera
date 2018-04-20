@@ -1,25 +1,16 @@
-import keras
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.optimizers import RMSprop
-import numpy as np
+import time
 from configparser import ConfigParser
 import os
 from celery import shared_task
-import keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2D
+from keras.utils import to_categorical
+from keras.optimizers import RMSprop,SGD,Adam
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 from utils.sampler import Sampler
 
-S = 'DeepLearning'
-LOCATION = 'data_set_location'
-
-LEARNING_RATE = 'learning_rate'
-BATCH_SIZE = 'batch_size'
-EPOCHS = 'epochs'
 label_dict = {1: 'speed_limit',
               2: 'goods_vehicles',
               3: 'no_overtaking',
@@ -36,6 +27,7 @@ label_dict = {1: 'speed_limit',
               14: 'parking'}
 
 # TODO Add Logging
+
 
 class DeepLearn:
     def __init__(self):
@@ -55,19 +47,26 @@ class DeepLearn:
     # Asynchronous Driver Method
     @shared_task
     def init_deep_learning(self):
-        self.process_data()
-        self.create_model()
-        self.train_model()
+        # TODO Remove test code
+        print("Going to sleep for 10s")
+        time.sleep(10)
+        print("Woke up from Sleep")
+        #TODO Uncomment these
+        # self.process_data()
+        # self.create_model()
+        # self.train_model()
 
     def process_data(self):
-        location=self.config.get(S, LOCATION)
-        self.data, self.labels = self.sampler.process_images(location)
+        location = self.config['img']['train_data_set_location']
+        self.data, self.labels = self.sampler.read_and_process_images(location)
+        #TODO Add Data Split for Training and Validation Set
 
     def create_model(self):
+        """Creates a Deep Learning Convolutional Neural Net Model"""
         # Layer 1: Conv
         self.model = Sequential()
         self.model.add(Conv2D(32, (5, 5), strides=(1, 1), padding='same',
-                           input_shape=self.data.shape[1:]))
+                              input_shape=self.data.shape[1:]))
         self.model.add(Activation('relu'))
         # Layer 2: Conv
         self.model.add(Conv2D(32, (5, 5), strides=(1, 1)))
@@ -91,19 +90,69 @@ class DeepLearn:
         self.model.add(Activation('relu'))
         self.model.add(Dropout(0.5))
         # Layer 9: Dense Final Classification
-        self.model.add(Dense(num_classes))
+        self.model.add(Dense(len(label_dict.keys())))
         self.model.add(Activation('softmax'))
         self.model.summary()
 
     def train_model(self):
-        # TODO Add Implementation for training
-        pass
+        """Trains Model """
+        self.model.compile(loss='categorical_crossentropy',
+                           optimizer=SGD(lr=float(self.config['hyperparameters']['learning_rate']),
+                                         momentum=float(self.config['hyperparameters']['momentum']),
+                                         decay=float(self.config['hyperparameters']['decay']),
+                                         nesterov=False),
+                           metrics=['accuracy'])
+        # Split data and labels into training, validation and test sets
+        x_train, x_test, y_train, y_test = train_test_split(self.data, self.labels,
+                                                            test_size=float(config['hyperparameters']['split']),
+                                                            random_state=42)
+        x_train, x_val, y_train, y_val = train_test_split(x_train, y_train,
+                                                          test_size=float(config['hyperparameters']['split']),
+                                                          random_state=42)
+        # One Hot Encoding for Output Labels
+        y_train = to_categorical(y_train, len(label_dict.keys()))
+        y_val = to_categorical(y_val, len(label_dict.keys()))
+        y_test = to_categorical(y_test, len(label_dict.keys()))
+
+        # Train
+        history = self.model.fit(x_train, y_train,
+                                 batch_size=int(self.config['hyperparameters']['batch_size']),
+                                 epochs=int(self.config['hyperparameters']['epochs']),
+                                 verbose=1,
+                                 validation_data=(x_val, y_val))
+
+        self.plot_loss_accuracy(history)
+        self.score = self.model.evaluate(x_test, y_test)
+        # TODO Remove this
+        print("Accuracy %.6f" % self.score[1])
+
+    def plot_loss_accuracy(self, history):
+        if not history:
+            return
+        fig = plt.figure(figsize=(12, 6))
+        ax = fig.add_subplot(1, 2, 1)
+        ax.plot(history.history["loss"], 'r-x', label="Train Loss")
+        ax.plot(history.history["val_loss"], 'b-x', label="Validation Loss")
+        ax.legend()
+        ax.set_title('cross_entropy loss')
+        ax.grid(True)
+
+        ax = fig.add_subplot(1, 2, 2)
+        ax.plot(history.history["acc"], 'r-x', label="Train Accuracy")
+        ax.plot(history.history["val_acc"], 'b-x', label="Validation Accuracy")
+        ax.legend()
+        ax.set_title('accuracy')
+        ax.grid(True)
+        fig.savefig('Training and Validation Out.png')
 
     def get_accuracy(self):
         return self.score[1]
 
-    def predict(self, idx):
-        # TODO Add Implementation for prediction
-        pass
-        # return self.model.predict(np.array([self.x_train[idx]])).argmax()
+    def predict(self, img):
+        return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
 
+
+if __name__ == '__main__':
+    dL = DeepLearn()
+    dL.process_data()
+    dL.train_model()

@@ -13,10 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include
+from django.urls import path
 from rec.views import TSRView
 
+# TODO Test these out
 urlpatterns = [
-    path('rec/status', TSRView.as_view(), name='status'),
-    # TODO Add UrlConfs for POST Init Training POST Predict GET Accuracy and so on
+    path(r'rec/status', TSRView.as_view()),
+    path(r'rec/train', TSRView.as_view()),
+    path(r'rec/accuracy', TSRView.as_view()),
+    path(r'rec/predict', TSRView.as_view()),
+
 ]
