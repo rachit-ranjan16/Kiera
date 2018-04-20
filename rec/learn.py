@@ -58,7 +58,8 @@ class DeepLearn:
 
     def process_data(self):
         location = self.config['img']['train_data_set_location']
-        self.data, self.labels = self.sampler.read_and_process_images(location)
+        self.sampler.read_and_process_images(location)
+        self.data, self.labels = self.sampler.get_images_and_labels()
         #TODO Add Data Split for Training and Validation Set
 
     def create_model(self):
@@ -92,6 +93,7 @@ class DeepLearn:
         # Layer 9: Dense Final Classification
         self.model.add(Dense(len(label_dict.keys())))
         self.model.add(Activation('softmax'))
+        # TODO Remove this print
         print(self.model.summary())
 
     def train_model(self):
@@ -158,5 +160,7 @@ if __name__ == '__main__':
     print("after Deeplearn")
     dL.process_data()
     print("after process data")
+    dL.create_model()
+    print("after create model")
     dL.train_model()
     print("after train model")
