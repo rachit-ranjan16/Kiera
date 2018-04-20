@@ -28,8 +28,8 @@ class Sampler:
             im = io.imread(filename)
             img_size = int(self.config['img']['frame_size'])
             g = resize(im, (img_size, img_size), mode='reflect')
-            save_name = 'resizeImage/' + filename.split('/')[5]
-            output_labels.append(int(filename.split('/')[5].split('_')[1]))
+            save_name = 'resizeImage/' + filename.split('/')[6]
+            output_labels.append(int(filename.split('/')[6].split('_')[1]))
             input_data.append(g)
             misc.imsave(save_name, g)
         return np.array(input_data), np.array(output_labels)
