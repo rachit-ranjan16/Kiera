@@ -24,7 +24,7 @@ class Sampler:
         output_labels = []
         input_data = []
         for filename in glob.glob(location):
-            print(filename.split('/'))
+            #print(filename.split('/'))
             im = io.imread(filename)
             img_size = int(self.config['img']['frame_size'])
             g = resize(im, (img_size, img_size), mode='reflect')
