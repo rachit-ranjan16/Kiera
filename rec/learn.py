@@ -123,7 +123,7 @@ class DeepLearn:
                                  verbose=1,
                                  validation_data=(x_val, y_val))
 
-        self.plot_loss_accuracy(history)
+        # self.plot_loss_accuracy(history)
         self.score = self.model.evaluate(x_test, y_test)
         # TODO Remove this
         print("Accuracy %.6f" % self.score[1])
