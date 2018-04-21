@@ -32,7 +32,7 @@ class Sampler:
             img_size = int(self.config['img']['frame_size'])
             g = resize(im, (img_size, img_size), mode='reflect')
             save_name = '/home/rachit/project/resizeImage/' + filename.split('/')[6]
-            output_labels.append(int(filename.split('/')[6].split('_')[1]))
+            output_labels.append(int(filename.split('/')[6].split('_')[1]) - 1)
             input_data.append(g)
             misc.imsave(save_name, g)
         self.input_data = np.array(input_data)
