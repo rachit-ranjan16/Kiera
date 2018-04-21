@@ -11,20 +11,20 @@ import matplotlib.pyplot as plt
 
 from utils.sampler import Sampler
 
-label_dict = {1: 'speed_limit',
-              2: 'goods_vehicles',
-              3: 'no_overtaking',
-              4: 'no_stopping',
-              5: 'no_parking',
-              6: 'stop',
-              7: 'bicycle',
-              8: 'hump',
-              9: 'no_left',
-              10: 'no_right',
-              11: 'priority_to',
-              12: 'no_entry',
-              13: 'yield',
-              14: 'parking'}
+label_dict = {0: 'speed_limit',
+              1: 'goods_vehicles',
+              2: 'no_overtaking',
+              3: 'no_stopping',
+              4: 'no_parking',
+              5: 'stop',
+              6: 'bicycle',
+              7: 'hump',
+              8: 'no_left',
+              9: 'no_right',
+              10: 'priority_to',
+              11: 'no_entry',
+              12: 'yield',
+              13: 'parking'}
 
 # TODO Add Logging
 
