@@ -129,11 +129,15 @@ class DeepLearn:
         print("Accuracy %.6f" % self.score[1])
         # self.model.save('kiera.h5')
 
+    #TODO Remove this
     def test_save_model(self):
         self.model = Sequential()
-        self.model.add(Conv2D(32, (5, 5), strides=(1, 1), padding='same',
-                              input_shape=self.data.shape[1:]))
+        self.model.add(Dense(512))
         self.model.add(Activation('relu'))
+        self.model.add(Dropout(0.5))
+        # Layer 9: Dense Final Classification
+        self.model.add(Dense(len(label_dict.keys())))
+        self.model.add(Activation('softmax'))
         self.model.save('model/kiera_%s.h5' % datetime.now().timestamp())
 
 

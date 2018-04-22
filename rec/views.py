@@ -52,6 +52,7 @@ class TSRTrainView(View):
             else:
                 init_learning.apply_async()
                 st.put_status('IN_PROGRESS')
+                return HttpResponse(status=201)
         except Exception as e:
             print("Caught Exception %r" % e.with_traceback())
             return HttpResponse(status=500)
