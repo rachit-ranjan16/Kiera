@@ -50,13 +50,13 @@ class DeepLearn:
     @shared_task
     def init_deep_learning(self):
         # # TODO Remove test code
-        # print("Going to sleep for 10s")
-        # time.sleep(10)
-        # print("Woke up from Sleep")
+        print("Going to sleep for 10s")
+        time.sleep(10)
+        print("Woke up from Sleep")
         # #TODO Uncomment these
-        self.process_data()
-        self.create_model()
-        self.train_model()
+        # self.process_data()
+        # self.create_model()
+        # self.train_model()
 
     def process_data(self):
         location = self.config['img']['train_data_set_location']
