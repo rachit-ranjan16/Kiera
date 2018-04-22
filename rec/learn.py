@@ -146,6 +146,8 @@ class DeepLearn:
         plt.savefig('LossAndAccuracy.png')
 
     def get_accuracy(self):
+        if not self.score:
+            return "Training Not Initiated"
         return self.score[1]
 
     def predict(self, img):

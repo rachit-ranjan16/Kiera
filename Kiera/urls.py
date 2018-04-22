@@ -19,7 +19,7 @@ from rec.views import TSRView
 # TODO Test these out
 urlpatterns = [
     path(r'rec/status', TSRView.as_view()),
-    path(r'rec/train', TSRView.as_view()),
+    # path(r'rec/train', TSRView.as_view()),
     path(r'rec/accuracy', TSRView.as_view()),
     path(r'rec/predict', TSRView.as_view()),
 
