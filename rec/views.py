@@ -28,6 +28,9 @@ state = State.READY
 class TSRStatusView(View):
     #TODO Fix Status
     def get(self, request):
+        #TODO Remove this
+        return HttpResponse(status=202)
+
         tokens = request.path.split('/')
         if len(tokens) > 3:
             return HttpResponse().status_code
