@@ -14,7 +14,7 @@ from .tasks import init_learning
 class Status:
 
     def __init__(self):
-        self.status = 'READY'
+        # self.status = 'READY'
         with open('status_info.txt', mode='w+') as f:
             f.close()
 
@@ -22,13 +22,11 @@ class Status:
         with open('status_info.txt', mode='r+') as f:
             if f.read() == "":
                 #TODO Promote to Log
-                f.write(self.status)
+                f.write('READY')
                 f.close()
                 return self.status
             else:
-                self.status = f.read()
-                f.close()
-                return self.status
+                return f.read()
 
     def put_status(self, status):
         with open('status_info.txt', mode='w') as f:
