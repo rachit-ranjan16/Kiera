@@ -123,29 +123,25 @@ class DeepLearn:
                                  verbose=1,
                                  validation_data=(x_val, y_val))
 
-        # self.plot_loss_accuracy(history)
+        self.plot_loss_accuracy(history)
         self.score = self.model.evaluate(x_test, y_test)
         # TODO Remove this
         print("Accuracy %.6f" % self.score[1])
 
     def plot_loss_accuracy(self, history):
-        if not history:
-            return
-        fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(1, 2, 1)
-        ax.plot(history.history["loss"], 'r-x', label="Train Loss")
-        ax.plot(history.history["val_loss"], 'b-x', label="Validation Loss")
-        ax.legend()
-        ax.set_title('cross_entropy loss')
-        ax.grid(True)
+        fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+        ax[0].plot(history.history["loss"], 'r-x', label="Train Loss")
+        ax[0].plot(history.history["val_loss"], 'b-x', label="Validation Loss")
+        ax[0].legend()
+        ax[0].set_title('cross_entropy loss')
+        ax[0].grid(True)
 
-        ax = fig.add_subplot(1, 2, 2)
-        ax.plot(history.history["acc"], 'r-x', label="Train Accuracy")
-        ax.plot(history.history["val_acc"], 'b-x', label="Validation Accuracy")
-        ax.legend()
-        ax.set_title('accuracy')
-        ax.grid(True)
-        fig.savefig('Training and Validation Out.png')
+        ax[1].plot(history.history["acc"], 'r-x', label="Train Accuracy")
+        ax[1].plot(history.history["val_acc"], 'b-x', label="Validation Accuracy")
+        ax[1].legend()
+        ax[1].set_title('accuracy')
+        ax[1].grid(True)
+        plt.savefig('LossAndAccuracy.png')
 
     def get_accuracy(self):
         return self.score[1]
