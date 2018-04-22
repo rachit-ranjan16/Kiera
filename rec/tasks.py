@@ -13,7 +13,7 @@ def init_learning():
     try:
         dL.init_deep_learning()
         print('Training Completed\nModel Saved')
-        print('Updating Status')
+        print('Updating Status in DB')
         Status(status='COMPLETED').save()
 
     except Exception as e:
