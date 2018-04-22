@@ -35,7 +35,7 @@ class TSRView(View):
         # TODO Add implementation for returning accuracy of the trained Deep Learning Model
         tokens = request.path.split('/')
         if len(tokens) > 3:
-            return HttpResponse(state=404)
+            return HttpResponse(status_code=404)
         if tokens[2] == 'status':
             response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
         elif tokens[2] == 'accuracy':
@@ -46,19 +46,19 @@ class TSRView(View):
     def post(self, request):
         tokens = request.path.split('/')
         if len(tokens) > 3:
-            return HttpResponse(state=400)
+            return HttpResponse(status_code=400)
         if tokens[2] == 'train':
             # POST /rec/train Initiate Training if State is READY or COMPLETED
             if self.state in (State.READY, State.COMPLETED):
                 # Initiate Training
                 init_learning(self.dL)
-                return HttpResponse(state=201)
+                return HttpResponse(status_code=201)
             elif self.state == State.IN_PROGRESS:
-                return HttpResponse(state=202)
+                return HttpResponse(status_code=202)
         elif tokens[2] == 'predict':
             try:
                 r = requests.get(json.load(request.body)['image-url'])
 
             except Exception:
-                return HttpResponse(status=400)
+                return HttpResponse(status_code=400)
 
