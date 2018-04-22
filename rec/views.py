@@ -8,51 +8,34 @@ matplotlib.use('Agg')
 from skimage import io
 from .learn import DeepLearn
 from .tasks import init_learning
+from .models import Status
 # Create your views here.
 
-
-class Status:
-
-    def __init__(self):
-        # self.status = 'READY'
-        with open('status_info.txt', mode='w+') as f:
-            f.close()
-
-    def get_status(self):
-        with open('status_info.txt', mode='r+') as f:
-            if f.read() == "":
-                #TODO Promote to Log
-                f.write('READY')
-                return 'READY'
-            else:
-                return f.read()
-
-    def put_status(self, status):
-        with open('status_info.txt', mode='w') as f:
-            f.write(status)
+Status(status='READY').save()
 
 
-st = Status()
-
+def get_status():
+    return Status.objects.latest('updated').status
 
 class TSRStatusView(View):
     def get(self, request):
         try:
-            response = HttpResponse(json.dumps({'status': st.get_status()}), content_type="application/json")
+            response = HttpResponse(json.dumps({'status': get_status()}), content_type="application/json")
             return response
         except Exception as e:
             print("Caught Exception %r" % e)
             return HttpResponse(status=500)
 
 
+
 class TSRTrainView(View):
 
     def post(self,request):
         try:
-            if st.get_status() == 'IN_PROGRESS':
+            if get_status() == 'IN_PROGRESS':
                 return HttpResponse(status=202)
             else:
-                st.put_status('IN_PROGRESS')
+                Status(status='IN_PROGRESS').save()
                 init_learning.apply_async()
                 return HttpResponse(status=201)
         except Exception as e:
