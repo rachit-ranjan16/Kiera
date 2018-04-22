@@ -24,8 +24,6 @@ state_dict = {
 
 state = State.READY
 
-def get_status(body):
-    print(body)
 
 class TSRView(View):
 
@@ -54,8 +52,8 @@ class TSRView(View):
             # POST /rec/train Initiate Training if State is READY or COMPLETED
             if self.state in (State.READY, State.COMPLETED):
                 # Initiate Training
-                self.async = init_learning.apply_async()
-                print(self.async.get(on_message=get_status(), propagate=False))
+                init_learning.apply_async()
+                # print(self.async.get(on_message=get_status(), propagate=False))
                 self.state = State.IN_PROGRESS
                 return HttpResponse(status=201)
             elif self.state == State.IN_PROGRESS:
