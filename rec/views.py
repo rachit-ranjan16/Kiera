@@ -3,6 +3,8 @@ from django.views import View
 from django.http import HttpResponse
 import json
 import os
+import matplotlib
+matplotlib.use('Agg')
 from skimage import io
 from .learn import DeepLearn
 from .tasks import init_learning
