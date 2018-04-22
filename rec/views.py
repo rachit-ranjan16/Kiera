@@ -52,8 +52,8 @@ class TSRTrainView(View):
             if st.get_status() == 'IN_PROGRESS':
                 return HttpResponse(status=202)
             else:
-                init_learning.apply_async()
                 st.put_status('IN_PROGRESS')
+                init_learning.apply_async()
                 return HttpResponse(status=201)
         except Exception as e:
             print("Caught Exception %r" % e)
