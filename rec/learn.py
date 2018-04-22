@@ -2,11 +2,12 @@ import time
 from configparser import ConfigParser
 import os
 import time
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2D
 from keras.utils import to_categorical
 from keras.optimizers import RMSprop,SGD,Adam
 from sklearn.model_selection import train_test_split
+from datetime import datetime
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -92,7 +93,7 @@ class DeepLearn:
         # Layer 9: Dense Final Classification
         self.model.add(Dense(len(label_dict.keys())))
         self.model.add(Activation('softmax'))
-        # TODO Remove this print
+        # TODO Promote to Logging
         print(self.model.summary())
 
     def train_model(self):
@@ -124,8 +125,17 @@ class DeepLearn:
 
         self.plot_loss_accuracy(history)
         self.score = self.model.evaluate(x_test, y_test)
-        # TODO Remove this
+        # TODO Promote to Logging
         print("Accuracy %.6f" % self.score[1])
+        # self.model.save('kiera.h5')
+
+    def test_save_model(self):
+        self.model = Sequential()
+        self.model.add(Conv2D(32, (5, 5), strides=(1, 1), padding='same',
+                              input_shape=self.data.shape[1:]))
+        self.model.add(Activation('relu'))
+        self.model.save('model/kiera_%s.h5' % datetime.now().timestamp())
+
 
     def plot_loss_accuracy(self, history):
         fig, ax = plt.subplots(1, 2, figsize=(12, 6))
@@ -148,6 +158,8 @@ class DeepLearn:
         return self.score[1]
 
     def predict(self, img):
+        if not self.model:
+            self.model = load_model('kiera')
         return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
 
 
