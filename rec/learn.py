@@ -7,6 +7,8 @@ from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2
 from keras.utils import to_categorical
 from keras.optimizers import RMSprop,SGD,Adam
 from sklearn.model_selection import train_test_split
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from utils.sampler import Sampler
