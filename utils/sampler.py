@@ -1,6 +1,4 @@
-# resize image to 64*64 to standardize the input for the training data
-# from skimage import data
-# from matplotlib import pyplot as plt
+
 from skimage import io
 from skimage.transform import resize
 from scipy import misc
@@ -8,6 +6,7 @@ import numpy as np
 import glob
 import os
 from configparser import ConfigParser
+
 
 class Sampler:
 
