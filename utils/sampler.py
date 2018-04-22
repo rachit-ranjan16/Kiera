@@ -1,6 +1,4 @@
-# resize image to 64*64 to standardize the input for the training data
-# from skimage import data
-# from matplotlib import pyplot as plt
+
 from skimage import io
 from skimage.transform import resize
 from scipy import misc
@@ -8,6 +6,7 @@ import numpy as np
 import glob
 import os
 from configparser import ConfigParser
+
 
 class Sampler:
 
@@ -31,10 +30,10 @@ class Sampler:
             im = io.imread(filename)
             img_size = int(self.config['img']['frame_size'])
             g = resize(im, (img_size, img_size), mode='reflect')
-            save_name = '/home/rachit/project/resizeImage/' + filename.split('/')[6]
+            #save_name = '/home/rachit/project/resizeImage/' + filename.split('/')[6]
             output_labels.append(int(filename.split('/')[6].split('_')[1]) - 1)
             input_data.append(g)
-            misc.imsave(save_name, g)
+            #misc.imsave(save_name, g)
         self.input_data = np.array(input_data)
         self.out_labels = np.array(output_labels)
         # return np.array(input_data), np.array(output_labels)

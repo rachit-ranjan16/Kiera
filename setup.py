@@ -25,6 +25,8 @@ setup(
        ],
    keywords='deep learning',
    packages=find_packages(),  # same as name
-   install_requires=['tensorflow', 'keras', 'numpy', 'django', 'celery', 'scikit-image', 'protobuf', 'enum34'],
+   install_requires=['tensorflow', 'keras', 'numpy', 'django', 'celery',
+                     'scikit-image', 'protobuf', 'enum34', 'h5py', 'scipy',
+                     'scikit-learn', 'matplotlib'],
    python_requires='~=3.6.3'
 )

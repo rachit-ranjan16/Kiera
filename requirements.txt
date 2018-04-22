@@ -6,6 +6,5 @@ requests
 django
 tensorflow
 keras
-pandas
 celery
 h5py
