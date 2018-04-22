@@ -23,7 +23,6 @@ class Status:
             if f.read() == "":
                 #TODO Promote to Log
                 f.write('READY')
-                f.close()
                 return 'READY'
             else:
                 return f.read()
