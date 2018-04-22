@@ -2,7 +2,8 @@
 from django.views import View
 from django.http import HttpResponse
 import json
-import requests
+import os
+from skimage import io
 from .learn import DeepLearn
 from .tasks import init_learning
 # Create your views here.
@@ -34,8 +35,8 @@ class Status:
 
 st = Status()
 
+
 class TSRStatusView(View):
-    #TODO Fix this
     def get(self, request):
         try:
             response = HttpResponse(json.dumps({'status': st.get_status()}), content_type="application/json")
@@ -63,10 +64,13 @@ class TSRTrainView(View):
 class TSRAccuracyView(View):
 
     def get(self, request):
-        #TODO Fix this
         try:
-            response = HttpResponse(json.dumps({'accuracy': 0.00}), content_type="application/json")
+            with open('accuracy.txt', mode='r') as f:
+                response = HttpResponse(json.dumps({'accuracy': f.read()}), content_type='application/json')
             return response
+        except FileNotFoundError:
+            response = HttpResponse(json.dumps({'error': 'Model not trained yet'}), content_type='application/json')
+            response.status_code = 400
             return response
         except Exception as e:
             print("Caught Exception %r" % e)
@@ -74,13 +78,18 @@ class TSRAccuracyView(View):
 
 
 class TSRPredictionView(View):
-    #TODO Extract image from the image-url and pass it to predict function
+
     def post(self, request):
         try:
+            #TODO Setup external image hosting service and get image from there
+            image_url = json.load(request.body)['image-url']
+            img = io.imread(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + os.sep +
+                            'utils' + os.sep + '4.bmp')
             dL = DeepLearn()
-            dL.predict(None)
+            dL.predict(img)
             return HttpResponse(json.dumps({'predicted_class_label': dL.predict()}), content_type="application/json")
-
+        except KeyError:
+            return HttpResponse(status=400)
         except Exception as e:
             print("Caught Exception %r" % e)
             return HttpResponse(status=500)

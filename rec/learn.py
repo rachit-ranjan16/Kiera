@@ -1,7 +1,5 @@
-import time
 from configparser import ConfigParser
 import os
-import time
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2D
 from keras.utils import to_categorical
@@ -124,6 +122,8 @@ class DeepLearn:
         # TODO Promote to Logging
         print("Accuracy %.6f" % self.score[1])
         self.model.save('kiera_trained.h5')
+        with open('accuracy.txt', mode='w') as f:
+            f.write(self.score[1])
 
     def plot_loss_accuracy(self, history):
         fig, ax = plt.subplots(1, 2, figsize=(12, 6))
@@ -146,11 +146,13 @@ class DeepLearn:
         return self.score[1]
 
     def predict(self, img):
-        if not self.model:
-            self.model = load_model('kiera_trained.h5')
-        #TODO Remove this
-        return 42
-        return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
+        return 5
+        try:
+            if not self.model:
+                self.model = load_model('kiera_trained.h5')
+            return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
+        except Exception as e:
+            raise Exception('Model Not Saved')
 
 
 if __name__ == '__main__':
