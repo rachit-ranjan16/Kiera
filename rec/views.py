@@ -17,6 +17,7 @@ Status(status='READY').save()
 def get_status():
     return Status.objects.latest('updated').status
 
+
 class TSRStatusView(View):
     def get(self, request):
         try:
@@ -25,7 +26,6 @@ class TSRStatusView(View):
         except Exception as e:
             print("Caught Exception %r" % e)
             return HttpResponse(status=500)
-
 
 
 class TSRTrainView(View):
@@ -62,18 +62,22 @@ class TSRAccuracyView(View):
 class TSRPredictionView(View):
 
     def post(self, request):
-        try:
-            #TODO Setup external image hosting service and get image from there
-            image_url = json.load(request.body)['image-url']
-            img = io.imread(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + os.sep +
-                            'utils' + os.sep + '4.bmp')
-            dL = DeepLearn()
-            dL.predict(img)
-            return HttpResponse(json.dumps({'predicted_class_label': dL.predict()}), content_type="application/json")
-        except KeyError:
-            return HttpResponse(status=400)
-        except Exception as e:
-            print("Caught Exception %r" % e)
-            return HttpResponse(status=500)
+        if get_status() == 'COMPLETED':
+            try:
+                #TODO Setup external image hosting service and get image from there
+                image_url = json.loads(str(request.body))['image-url']
+                img = io.imread(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + os.sep +
+                                'utils' + os.sep + '4.bmp')
+                dL = DeepLearn()
+                return HttpResponse(json.dumps({'predicted_class_label': dL.predict(img)}), content_type="application/json")
+            except KeyError:
+                return HttpResponse(status=400)
+            except Exception as e:
+                print("Caught Exception %r" % e)
+                return HttpResponse(status=500)
+        else:
+            response = HttpResponse(json.dumps({'error': 'Model not trained yet'}), content_type='application/json')
+            response.status_code = 400
+            return response
 
 
