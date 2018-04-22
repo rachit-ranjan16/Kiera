@@ -25,24 +25,40 @@ state_dict = {
 state = State.READY
 
 
-class TSRView(View):
-
-    def __init__(self):
-        self.state = State.READY
-        self.dL = DeepLearn()
-
+class TSRStatusView(View):
+    #TODO Fix Status
     def get(self, request):
-        # TODO Add implementation for returning accuracy of the trained Deep Learning Model
         tokens = request.path.split('/')
         if len(tokens) > 3:
             return HttpResponse().status_code
         if tokens[2] == 'status':
-            response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
-        elif tokens[2] == 'accuracy':
-            response = HttpResponse(json.dumps({'accuracy': self.dL.get_accuracy()}), content_type="application/json")
-        response.status_code = 200
-        return response
+            response = HttpResponse(json.dumps({'status': state_dict[self.state]}), content_type="application/json")
+            return response
+        else:
+            return HttpResponse(status=400)
 
+        return HttpResponse(status=500)
+
+
+class TSRAccuracyView(View):
+
+    def get(self, request):
+        #TODO Remove this
+        return HttpResponse(status=202)
+
+        tokens = request.path.split('/')
+        if len(tokens) > 3:
+            return HttpResponse().status_code
+        if tokens[2] == 'accuracy':
+            response = HttpResponse(json.dumps({'accuracy': self.dL.get_accuracy()}), content_type="application/json")
+            return response
+        else:
+            return HttpResponse(status=400)
+
+        return HttpResponse(status=500)
+
+
+class TSRTrainView(View):
 
     def post(self, request):
         tokens = request.path.split('/')
@@ -56,12 +72,14 @@ class TSRView(View):
                 # print(self.async.get(on_message=get_status(), propagate=False))
                 self.state = State.IN_PROGRESS
                 return HttpResponse(status=201)
-            elif self.state == State.IN_PROGRESS:
-                return HttpResponse(status=202)
-        elif tokens[2] == 'predict':
-            try:
-                r = requests.get(json.load(request.body)['image-url'])
+        else:
+            return HttpResponse(status=400)
 
-            except Exception:
-                return HttpResponse(status=400)
+        return HttpResponse(status=500)
 
+
+class TSRPredictionView(View):
+
+    def post(self, request):
+        #TODO Remove this
+        return HttpResponse(status=202)

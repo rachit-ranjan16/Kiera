@@ -14,13 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from rec.views import TSRView
+from rec.views import TSRStatusView, TSRTrainView, TSRAccuracyView, TSRPredictionView
 
 # TODO Test these out
 urlpatterns = [
-    path(r'rec/status', TSRView.as_view()),
-    path(r'rec/train', TSRView.as_view()),
-    path(r'rec/accuracy', TSRView.as_view()),
-    path(r'rec/predict', TSRView.as_view()),
+    path(r'rec/status', TSRStatusView.as_view()),
+    path(r'rec/train', TSRTrainView.as_view()),
+    path(r'rec/accuracy', TSRAccuracyView.as_view()),
+    path(r'rec/predict', TSRPredictionView.as_view()),
 
 ]
