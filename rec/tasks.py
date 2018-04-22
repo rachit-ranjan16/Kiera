@@ -1,6 +1,6 @@
 import celery
 import time
-from .views import TSRView
+# from .views import TSRView
 
 
 @celery.task
