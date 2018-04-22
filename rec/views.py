@@ -54,7 +54,7 @@ class TSRView(View):
             # POST /rec/train Initiate Training if State is READY or COMPLETED
             if self.state in (State.READY, State.COMPLETED):
                 # Initiate Training
-                self.async = init_learning.apply_async(self.dL)
+                self.async = init_learning.apply_async()
                 print(self.async.get(on_message=get_status(), propagate=False))
                 self.state = State.IN_PROGRESS
                 return HttpResponse(status=201)
