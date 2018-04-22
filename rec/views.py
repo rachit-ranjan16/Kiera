@@ -13,16 +13,18 @@ class Status:
     def __init__(self):
         self.status = 'READY'
         with open('status_info.txt', mode='w+') as f:
-            pass
+            f.close()
 
     def get_status(self):
         with open('status_info.txt', mode='r+') as f:
             if f.read() == "":
                 #TODO Promote to Log
                 f.write(self.status)
+                f.close()
                 return self.status
             else:
                 self.status = f.read()
+                f.close()
                 return self.status
 
     def put_status(self, status):
@@ -39,7 +41,7 @@ class TSRStatusView(View):
             response = HttpResponse(json.dumps({'status': st.get_status()}), content_type="application/json")
             return response
         except Exception as e:
-            print("Caught Exception %r" % e.with_traceback())
+            print("Caught Exception %r" % e)
             return HttpResponse(status=500)
 
 
@@ -54,7 +56,7 @@ class TSRTrainView(View):
                 st.put_status('IN_PROGRESS')
                 return HttpResponse(status=201)
         except Exception as e:
-            print("Caught Exception %r" % e.with_traceback())
+            print("Caught Exception %r" % e)
             return HttpResponse(status=500)
 
 
@@ -67,19 +69,20 @@ class TSRAccuracyView(View):
             return response
             return response
         except Exception as e:
-            print("Caught Exception %r" % e.with_traceback())
+            print("Caught Exception %r" % e)
             return HttpResponse(status=500)
 
 
 class TSRPredictionView(View):
-    #TODO Load deep learning model and get predictions
-    #TODO Extract image from the image-url passed
+    #TODO Extract image from the image-url and pass it to predict function
     def post(self, request):
         try:
-            return HttpResponse(status=202)
+            dL = DeepLearn()
+            dL.predict(None)
+            return HttpResponse(json.dumps({'predicted_class_label': dL.predict()}), content_type="application/json")
 
         except Exception as e:
-            print("Caught Exception %r" % e.with_traceback())
+            print("Caught Exception %r" % e)
             return HttpResponse(status=500)
 
 

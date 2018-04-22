@@ -48,13 +48,9 @@ class DeepLearn:
         self.sampler = Sampler()
 
     def init_deep_learning(self):
-        print ("Reached Deep Learning Code")
-        print("Going to sleep for 120s")
-        time.sleep(120)
-        print("Back up")
-        # self.process_data()
-        # self.create_model()
-        # self.train_model()
+        self.process_data()
+        self.create_model()
+        self.train_model()
 
     def process_data(self):
         location = self.config['img']['train_data_set_location']
@@ -127,19 +123,7 @@ class DeepLearn:
         self.score = self.model.evaluate(x_test, y_test)
         # TODO Promote to Logging
         print("Accuracy %.6f" % self.score[1])
-        # self.model.save('kiera.h5')
-
-    #TODO Remove this
-    def test_save_model(self):
-        self.model = Sequential()
-        self.model.add(Dense(512))
-        self.model.add(Activation('relu'))
-        self.model.add(Dropout(0.5))
-        # Layer 9: Dense Final Classification
-        self.model.add(Dense(len(label_dict.keys())))
-        self.model.add(Activation('softmax'))
-        self.model.save('model/kiera_%s.h5' % datetime.now().timestamp())
-
+        self.model.save('kiera_trained.h5')
 
     def plot_loss_accuracy(self, history):
         fig, ax = plt.subplots(1, 2, figsize=(12, 6))
@@ -163,7 +147,9 @@ class DeepLearn:
 
     def predict(self, img):
         if not self.model:
-            self.model = load_model('kiera')
+            self.model = load_model('kiera_trained.h5')
+        #TODO Remove this
+        return 42
         return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
 
 

@@ -8,3 +8,4 @@ tensorflow
 keras
 pandas
 celery
+h5py
