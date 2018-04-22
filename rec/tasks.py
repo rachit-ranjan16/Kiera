@@ -1,7 +1,7 @@
 import celery
 import time
 from .learn import DeepLearn
-from .views import Status
+
 
 
 @celery.task
@@ -13,4 +13,5 @@ def init_learning():
     print('Training Completed\nModel Saved')
     # TODO Add method in DeepLearn to save model
     print('Updating Status')
-    Status.current = 'COMPLETED'
+    with open('status_info.txt', mode='w') as f:
+        f.write('COMPLETED')
