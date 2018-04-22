@@ -24,12 +24,15 @@ state_dict = {
 
 state = State.READY
 
+def get_status(body):
+    print(body)
 
 class TSRView(View):
 
     def __init__(self):
         self.state = State.READY
         self.dL = DeepLearn()
+        self.async = None
 
     def get(self, request):
         # TODO Add implementation for returning accuracy of the trained Deep Learning Model
@@ -43,6 +46,7 @@ class TSRView(View):
         response.status_code = 200
         return response
 
+
     def post(self, request):
         tokens = request.path.split('/')
         if len(tokens) > 3:
@@ -51,7 +55,8 @@ class TSRView(View):
             # POST /rec/train Initiate Training if State is READY or COMPLETED
             if self.state in (State.READY, State.COMPLETED):
                 # Initiate Training
-                init_learning.delay()
+                self.async = init_learning.apply_async(self.dL)
+                print(r.get(on_message=get_status(), propagate=False))
                 self.state = State.IN_PROGRESS
                 return HttpResponse(status=201)
             elif self.state == State.IN_PROGRESS:

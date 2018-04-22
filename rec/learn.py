@@ -1,7 +1,7 @@
 import time
 from configparser import ConfigParser
 import os
-from celery import shared_task
+import time
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2D
 from keras.utils import to_categorical
@@ -46,14 +46,11 @@ class DeepLearn:
         self.labels = None
         self.sampler = Sampler()
 
-    # Asynchronous Driver Method
-    @shared_task
     def init_deep_learning(self):
-        # # TODO Remove test code
-        print("Going to sleep for 10s")
-        time.sleep(10)
-        print("Woke up from Sleep")
-        # #TODO Uncomment these
+        print ("Reached Deep Learning Code")
+        print("Going to sleep for 120s")
+        time.sleep(120)
+        print("Back up")
         # self.process_data()
         # self.create_model()
         # self.train_model()
