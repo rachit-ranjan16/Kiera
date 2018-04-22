@@ -1,10 +1,11 @@
-from celery import shared_task
+import celery
 import time
 
-@shared_task
+
+@celery.task
 def init_learning(dl):
     # TODO Remove this
     print("Going to sleep for 10s")
-    time.sleep(10);
+    time.sleep(10)
     print("I'm back up")
     #TODO Add Deep Learning Inititalization Code
