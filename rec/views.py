@@ -36,7 +36,7 @@ class TSRView(View):
         tokens = request.path.split('/')
         if len(tokens) > 3:
             return HttpResponse(state=404)
-        if tokens[2] == 'state':
+        if tokens[2] == 'status':
             response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
         elif tokens[2] == 'accuracy':
             response = HttpResponse(json.dumps({'accuracy': self.dL.get_accuracy()}), content_type="application/json")
