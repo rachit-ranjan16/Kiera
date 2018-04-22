@@ -1,7 +1,6 @@
-from django.shortcuts import render
+
 from django.views import View
 from django.http import HttpResponse
-from enum import Enum
 import json
 import requests
 from .learn import DeepLearn
@@ -9,56 +8,81 @@ from .tasks import init_learning
 # Create your views here.
 
 
-class State(Enum):
-    # TODO Decide if this has to be moved to utils package
-    READY = 1
-    IN_PROGRESS = 2
-    COMPLETED = 3
-
-
-state_dict = {
-    State.READY: 'READY',
-    State.IN_PROGRESS: 'IN_PROGRESS',
-    State.COMPLETED: 'COMPLETED'
-}
-
-state = State.READY
-
-
-class TSRView(View):
+class Status:
 
     def __init__(self):
-        self.state = State.READY
-        self.dL = DeepLearn()
+        self.status = 'READY'
+        with open('status_info.txt', mode='w+') as f:
+            f.close()
+
+    def get_status(self):
+        with open('status_info.txt', mode='r+') as f:
+            if f.read() == "":
+                #TODO Promote to Log
+                f.write(self.status)
+                f.close()
+                return self.status
+            else:
+                self.status = f.read()
+                f.close()
+                return self.status
+
+    def put_status(self, status):
+        with open('status_info.txt', mode='w') as f:
+            f.write(status)
+
+
+st = Status()
+
+class TSRStatusView(View):
+    #TODO Fix this
+    def get(self, request):
+        try:
+            response = HttpResponse(json.dumps({'status': st.get_status()}), content_type="application/json")
+            return response
+        except Exception as e:
+            print("Caught Exception %r" % e)
+            return HttpResponse(status=500)
+
+
+class TSRTrainView(View):
+
+    def post(self,request):
+        try:
+            if st.get_status() == 'IN_PROGRESS':
+                return HttpResponse(status=202)
+            else:
+                init_learning.apply_async()
+                st.put_status('IN_PROGRESS')
+                return HttpResponse(status=201)
+        except Exception as e:
+            print("Caught Exception %r" % e)
+            return HttpResponse(status=500)
+
+
+class TSRAccuracyView(View):
 
     def get(self, request):
-        # TODO Add implementation for returning accuracy of the trained Deep Learning Model
-        tokens = request.path.split('/')
-        if len(tokens) > 3:
-            return HttpResponse(state=404)
-        if tokens[2] == 'state':
-            response = HttpResponse(json.dumps({'state': state_dict[self.state]}), content_type="application/json")
-        elif tokens[2] == 'accuracy':
-            response = HttpResponse(json.dumps({'accuracy': self.dL.get_accuracy()}), content_type="application/json")
-        response.status_code = 200
-        return response
+        #TODO Fix this
+        try:
+            response = HttpResponse(json.dumps({'accuracy': 0.00}), content_type="application/json")
+            return response
+            return response
+        except Exception as e:
+            print("Caught Exception %r" % e)
+            return HttpResponse(status=500)
 
+
+class TSRPredictionView(View):
+    #TODO Extract image from the image-url and pass it to predict function
     def post(self, request):
-        tokens = request.path.split('/')
-        if len(tokens) > 3:
-            return HttpResponse(state=400)
-        if tokens[2] == 'train':
-            # POST /rec/train Initiate Training if State is READY or COMPLETED
-            if self.state in (State.READY, State.COMPLETED):
-                # Initiate Training
-                init_learning(self.dL)
-                return HttpResponse(state=201)
-            elif self.state == State.IN_PROGRESS:
-                return HttpResponse(state=202)
-        elif tokens[2] == 'predict':
-            try:
-                r = requests.get(json.load(request.body)['image-url'])
+        try:
+            dL = DeepLearn()
+            dL.predict(None)
+            return HttpResponse(json.dumps({'predicted_class_label': dL.predict()}), content_type="application/json")
 
-            except Exception:
-                return HttpResponse(status=400)
+        except Exception as e:
+            print("Caught Exception %r" % e)
+            return HttpResponse(status=500)
+
 

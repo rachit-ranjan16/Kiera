@@ -1,12 +1,13 @@
 import time
 from configparser import ConfigParser
 import os
-from celery import shared_task
-from keras.models import Sequential
+import time
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten,Conv2D, MaxPooling2D
 from keras.utils import to_categorical
 from keras.optimizers import RMSprop,SGD,Adam
 from sklearn.model_selection import train_test_split
+from datetime import datetime
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -46,14 +47,7 @@ class DeepLearn:
         self.labels = None
         self.sampler = Sampler()
 
-    # Asynchronous Driver Method
-    @shared_task
     def init_deep_learning(self):
-        # # TODO Remove test code
-        # print("Going to sleep for 10s")
-        # time.sleep(10)
-        # print("Woke up from Sleep")
-        # #TODO Uncomment these
         self.process_data()
         self.create_model()
         self.train_model()
@@ -95,7 +89,7 @@ class DeepLearn:
         # Layer 9: Dense Final Classification
         self.model.add(Dense(len(label_dict.keys())))
         self.model.add(Activation('softmax'))
-        # TODO Remove this print
+        # TODO Promote to Logging
         print(self.model.summary())
 
     def train_model(self):
@@ -127,8 +121,9 @@ class DeepLearn:
 
         self.plot_loss_accuracy(history)
         self.score = self.model.evaluate(x_test, y_test)
-        # TODO Remove this
+        # TODO Promote to Logging
         print("Accuracy %.6f" % self.score[1])
+        self.model.save('kiera_trained.h5')
 
     def plot_loss_accuracy(self, history):
         fig, ax = plt.subplots(1, 2, figsize=(12, 6))
@@ -146,9 +141,15 @@ class DeepLearn:
         plt.savefig('LossAndAccuracy.png')
 
     def get_accuracy(self):
+        if not self.score:
+            return "Training Not Initiated"
         return self.score[1]
 
     def predict(self, img):
+        if not self.model:
+            self.model = load_model('kiera_trained.h5')
+        #TODO Remove this
+        return 42
         return label_dict[self.model.predict(self.sampler.process_image(img)).argmax() + 1]
 
 

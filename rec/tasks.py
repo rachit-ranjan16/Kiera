@@ -1,10 +1,24 @@
-from celery import shared_task
+import celery
 import time
+from .learn import DeepLearn
 
-@shared_task
-def init_learning(dl):
-    # TODO Remove this
-    print("Going to sleep for 10s")
-    time.sleep(10);
-    print("I'm back up")
-    #TODO Add Deep Learning Inititalization Code
+
+
+@celery.task
+def init_learning():
+    dL = DeepLearn()
+    print('Initiating Deep Learning')
+    # dL.init_deep_learning()
+    try:
+        dL.init_deep_learning()
+        print('Training Completed\nModel Saved')
+        # TODO Add method in DeepLearn to save model
+        print('Updating Status')
+        with open('status_info.txt', mode='w') as f:
+            f.write('COMPLETED')
+            f.close()
+    except Exception as e:
+        print("Caught Exception %r" % e)
+        with open('status_info.txt', mode='w') as f:
+            f.write('ERROR')
+            f.close()
