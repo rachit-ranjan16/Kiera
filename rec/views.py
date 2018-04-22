@@ -51,7 +51,7 @@ class TSRView(View):
             # POST /rec/train Initiate Training if State is READY or COMPLETED
             if self.state in (State.READY, State.COMPLETED):
                 # Initiate Training
-                init_learning.delay(self.dL)
+                init_learning.delay()
                 self.state = State.IN_PROGRESS
                 return HttpResponse(status=201)
             elif self.state == State.IN_PROGRESS:
