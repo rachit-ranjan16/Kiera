@@ -24,7 +24,7 @@ class Status:
                 #TODO Promote to Log
                 f.write('READY')
                 f.close()
-                return self.status
+                return 'READY'
             else:
                 return f.read()
 
